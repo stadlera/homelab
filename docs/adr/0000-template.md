@@ -25,22 +25,39 @@ Chosen option: **[Option A]**, because [concise justification].
 
 ### Consequences
 
-* Good: [positive outcome]
-* Bad / watch out: [trade-off or follow-up needed]
+* Good, because [positive outcome]
+* Bad, because [trade-off or follow-up needed]
 
-## Options Considered
+### Confirmation
+
+[How will compliance with this decision be verified? e.g., CI check, pre-commit hook, design review, test suite.]
+
+## Pros and Cons of the Options
 
 ### [Option A]
 
+[Optional: one-line description or link to more information.]
+
 * Good, because [reason]
+* Neutral, because [reason]
 * Bad, because [reason]
 
 ### [Option B]
 
+[Optional: one-line description or link to more information.]
+
 * Good, because [reason]
+* Neutral, because [reason]
 * Bad, because [reason]
 
 ### [Option C]
 
+[Optional: one-line description or link to more information.]
+
 * Good, because [reason]
+* Neutral, because [reason]
 * Bad, because [reason]
+
+## More Information
+
+[Links to follow-up issues, related ADRs, external references, or notes on when to revisit this decision.]
