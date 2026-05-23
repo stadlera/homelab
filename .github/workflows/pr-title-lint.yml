@@ -16,27 +16,19 @@ jobs:
 
           APPROVED_TYPES="feat|fix|chore|docs|ci|refactor|security"
 
-          # Matches any conventional-commit-shaped prefix: lowercase word(s), optional
-          # scope, optional breaking !, colon+space. If the title looks like this it
-          # must use an approved type. Plain titles (no prefix) are accepted as-is.
-          CONVENTIONAL_PATTERN="^[a-z]+(\([^)]+\))?!?:[[:space:]]"
-          APPROVED_PATTERN="^(${APPROVED_TYPES})(\([^)]+\))?!?:[[:space:]].+"
+          # Required format: type[!]: description  (scope is not allowed)
+          # type must be one of the approved keywords; breaking ! is optional.
+          APPROVED_PATTERN="^(${APPROVED_TYPES})!?:[[:space:]].+"
 
-          if echo "$PR_TITLE" | grep -qE "$CONVENTIONAL_PATTERN"; then
-            if ! echo "$PR_TITLE" | grep -qE "$APPROVED_PATTERN"; then
-              echo "ERROR: PR title uses a conventional-commit prefix but the type is not approved."
-              echo ""
-              echo "  Approved types: feat  fix  chore  docs  ci  refactor  security"
-              echo "  Format:         type[(scope)][!]: short description"
-              echo "  Breaking:       feat!: drop support for X"
-              echo "  With scope:     fix(ansible): correct vault path"
-              echo ""
-              echo "  Got: ${PR_TITLE}"
-              echo ""
-              echo "  Alternatively, omit the prefix entirely for plain-text titles."
-              exit 1
-            fi
-            echo "OK: conventional commit format with approved type."
-          else
-            echo "OK: plain-text title accepted (no conventional-commit prefix detected)."
+          if ! echo "$PR_TITLE" | grep -qE "$APPROVED_PATTERN"; then
+            echo "ERROR: PR title does not match the required format."
+            echo ""
+            echo "  Required: type[!]: short description"
+            echo "  Approved types: feat  fix  chore  docs  ci  refactor  security"
+            echo "  Breaking:       feat!: drop support for X"
+            echo ""
+            echo "  Got: ${PR_TITLE}"
+            exit 1
           fi
+
+          echo "OK: PR title format is valid."
