@@ -27,7 +27,8 @@ Every change follows this sequence:
 - Branch naming: `feat/`, `fix/`, `chore/`, `docs/` + short slug (e.g. `feat/snapcast-server-role`)
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): short description`
   - Valid types: `feat`, `fix`, `chore`, `docs`, `ci`, `refactor`, `security`
-- PRs reference their issue: `Closes #N` in the PR description
+- PRs reference their issue: `Closes #N` in the PR description — GitHub auto-closes the issue on merge
+- Merge strategy: **squash merge**, commit message = PR title only; the PR description carries the detail
 - Keep PRs small and focused on one issue
 
 ## Repository layout
