@@ -30,7 +30,7 @@ Chosen option: **[Option A]**, because [concise justification].
 
 ### Confirmation
 
-[How will compliance with this decision be verified? e.g., CI check, pre-commit hook, design review, test suite.]
+[How can the implementation be confirmed to align with this decision? e.g., a design or PR review against this ADR, or a structural test that validates the chosen approach is in place.]
 
 ## Pros and Cons of the Options
 
