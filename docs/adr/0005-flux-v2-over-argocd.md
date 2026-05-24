@@ -1,6 +1,6 @@
 # ADR-0005 — Use Flux v2 over ArgoCD for GitOps
 
-* Status: proposed
+* Status: accepted
 * Date: 2026-05-24
 * Issue: #10
 
