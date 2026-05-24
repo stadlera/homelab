@@ -47,7 +47,6 @@ Every change follows this sequence:
   ```
   git ls-remote https://github.com/owner/action refs/tags/vN
   ```
-- **Always post new comments, never edit existing ones.** Updating a comment in-place hides history and makes the PR timeline confusing.
 
 ## Principles
 
