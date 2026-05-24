@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "UTC",
+  "schedule": ["before 6am on Friday"],
+  "labels": ["dependencies"],
+  "pinDigests": true,
+  "packageRules": [
+    {
+      "description": "Automerge GitHub Actions digest-only updates",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group GitHub Actions version bumps (non-digest) into one PR",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major", "minor", "patch"],
+      "groupName": "github actions"
+    },
+    {
+      "description": "Group Terraform provider updates into one PR",
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["provider"],
+      "groupName": "terraform providers"
+    },
+    {
+      "description": "Group Terraform module updates into one PR",
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["module"],
+      "groupName": "terraform modules"
+    },
+    {
+      "description": "Group Flux HelmRelease chart version updates into one PR",
+      "matchManagers": ["flux"],
+      "groupName": "flux helm releases"
+    },
+    {
+      "description": "Group Kubernetes container image updates into one PR",
+      "matchManagers": ["kubernetes"],
+      "groupName": "container images"
+    },
+    {
+      "description": "Group Ansible Galaxy role and collection updates into one PR",
+      "matchManagers": ["ansible-galaxy"],
+      "groupName": "ansible galaxy"
+    }
+  ]
+}
