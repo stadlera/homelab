@@ -1,4 +1,4 @@
-# ADR-0004 — Use Flux v2 over ArgoCD for GitOps
+# ADR-0005 — Use Flux v2 over ArgoCD for GitOps
 
 * Status: proposed
 * Date: 2026-05-24
