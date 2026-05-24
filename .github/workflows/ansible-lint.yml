@@ -2,13 +2,28 @@ name: Ansible Lint
 
 on:
   pull_request:
-    paths:
-      - 'ansible/**'
 
 permissions: {}
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      ansible: ${{ steps.filter.outputs.ansible }}
+    steps:
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
+        id: filter
+        with:
+          filters: |
+            ansible:
+              - 'ansible/**'
+              - '.ansible-lint'
+
   ansible-lint:
+    needs: changes
+    if: needs.changes.outputs.ansible == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
