@@ -2,15 +2,20 @@ name: Terraform CI
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'terraform/**'
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
+  changes:
+    uses: ./.github/workflows/changes-gate.yml
+    with:
+      filters: |
+        src:
+          - 'terraform/**'
+
   fmt:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     name: Format check
     runs-on: ubuntu-latest
     permissions:
@@ -24,6 +29,8 @@ jobs:
         run: tofu fmt -check -recursive terraform/
 
   validate-plan:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     name: validate + plan (${{ matrix.module }})
     runs-on: ubuntu-latest
     permissions:
