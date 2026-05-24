@@ -1,0 +1,27 @@
+name: Detect changed paths
+
+on:
+  workflow_call:
+    inputs:
+      filters:
+        required: true
+        type: string
+    outputs:
+      changed:
+        description: 'true if any path in filters changed'
+        value: ${{ jobs.detect.outputs.changed }}
+
+permissions: {}
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      changed: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: ${{ inputs.filters }}

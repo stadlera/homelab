@@ -1,0 +1,58 @@
+name: OpenTofu CI
+
+on:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  changes:
+    uses: ./.github/workflows/changes-gate.yml
+    permissions:
+      pull-requests: read
+    with:
+      filters: |
+        src:
+          - 'opentofu/**'
+
+  fmt:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    name: format check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
+        with:
+          tofu_version: '~1.9'
+      - name: tofu fmt
+        run: tofu fmt -check -recursive opentofu/
+
+  validate-plan:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    name: validate + plan (${{ matrix.module }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        module: [cloudflare, networking, proxmox, tailscale]
+      fail-fast: false
+    defaults:
+      run:
+        working-directory: opentofu/${{ matrix.module }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
+        with:
+          tofu_version: '~1.9'
+      - name: tofu init
+        run: tofu init -backend=false
+      - name: tofu validate
+        run: tofu validate
+      - name: tofu plan
+        run: tofu plan -refresh=false -input=false
+
