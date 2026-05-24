@@ -1,4 +1,4 @@
-# ADR-0001 — Pin GitHub Actions to SHA digests
+# ADR-0002 — Pin GitHub Actions to SHA digests
 
 * Status: accepted
 * Date: 2026-05-24
@@ -16,19 +16,19 @@ GitHub Actions workflows reference external actions via mutable tags (e.g. `acti
 
 ## Considered Options
 
-* **Option A** — Pin all `uses:` references to full SHA digests, managed by Renovate
-* **Option B** — Use mutable version tags (`@v4`), rely on upstream maintainer integrity
-* **Option C** — Pin major-version tags only (`@v4`), a middle ground with no automation path
+* SHA digest pinning
+* Mutable version tags
+* Major-version tags only
 
 ## Decision Outcome
 
-Chosen option: **Option A**, because Renovate eliminates the maintenance cost and the security benefit is unambiguous. SHA digests are immutable; a compromised upstream tag cannot affect pinned workflows.
+Chosen option: **SHA digest pinning**, because Renovate eliminates the maintenance cost and the security benefit is unambiguous. SHA digests are immutable; a compromised upstream tag cannot affect pinned workflows.
 
 ### Consequences
 
 * Good, because CI supply chain is protected against tag-hijacking attacks
 * Good, because Renovate digest bumps are automerged (zero toil once configured)
-* Bad, because diffs show opaque SHA strings rather than human-readable version tags — reviewers should check the Renovate PR description for the resolved version name
+* Bad, because diffs show opaque SHA strings rather than human-readable version tags — reviewers must rely on the inline version comment to recognise what changed
 
 ### Confirmation
 
@@ -42,26 +42,32 @@ Renovate enforces this via `pinDigests: true` in `renovate.json` and will open P
 
 ## Pros and Cons of the Options
 
-### Option A — SHA digest pinning
+### SHA digest pinning
+
+Each `uses:` reference is a full 40-character commit SHA with the version tag as an inline comment. Renovate handles all updates.
 
 * Good, because builds are fully reproducible and tamper-evident
-* Good, because Renovate automates all updates
+* Good, because Renovate automates all updates, so the operational cost is zero
 * Bad, because SHA strings are opaque without the inline comment convention
 
-### Option B — Mutable version tags
+### Mutable version tags
 
-* Good, because diffs remain readable
+Workflows reference tags like `@v4` and trust the upstream maintainer to never reassign them.
+
+* Good, because diffs remain human-readable
 * Bad, because a compromised upstream release can silently alter CI behaviour
 * Bad, because there is no automated update path — tags drift unnoticed
 
-### Option C — Major-version tags only
+### Major-version tags only
 
-* Neutral, because it prevents accidental minor/patch breakage
-* Bad, because major tags are still mutable and offer no tamper protection
-* Bad, because there is still no automated update path for digest-level changes
+A middle ground: pin to `@v4` and accept that the tag is mutable within the major version.
+
+* Neutral, because it prevents accidental major-version breakage but offers no tamper protection
+* Bad, because major tags are still mutable and offer no supply-chain integrity guarantee
+* Bad, because there is still no automated update path for minor or patch changes
 
 ## More Information
 
-* [StepSecurity — Why you should pin GitHub Actions to a commit SHA](https://www.stepsecurity.io/blog/github-actions-security-best-practices)
+* [StepSecurity — GitHub Actions security best practices](https://www.stepsecurity.io/blog/github-actions-security-best-practices)
 * [GitHub docs — Security hardening for GitHub Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions#using-third-party-actions)
 * Renovate `pinDigests` option: https://docs.renovatebot.com/configuration-options/#pindigests

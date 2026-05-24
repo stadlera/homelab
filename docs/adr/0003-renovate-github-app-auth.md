@@ -1,4 +1,4 @@
-# ADR-0002 — Authenticate self-hosted Renovate via a custom GitHub App
+# ADR-0003 — Authenticate self-hosted Renovate via a custom GitHub App
 
 * Status: accepted
 * Date: 2026-05-24
@@ -18,17 +18,17 @@ The Renovate GitHub Action (`renovatebot/github-action`) needs a token to push b
 
 ## Considered Options
 
-* **Option A** — Classic Personal Access Token (PAT) with `repo` + `workflow` scopes, stored as `RENOVATE_TOKEN`
-* **Option B** — Fine-grained PAT scoped to `stadlera/homelab`, stored as `RENOVATE_TOKEN`
-* **Option C** — Custom GitHub App owned by the repo owner, installed only on `stadlera/homelab`, with installation tokens minted per-run by `actions/create-github-app-token`
+* Classic Personal Access Token
+* Fine-grained Personal Access Token
+* Custom GitHub App
 
 ## Decision Outcome
 
-Chosen option: **Option C**, because it is the only option that combines short-lived tokens (1 hour, minted fresh each run), repository-scoped permissions, independence from any user account, and PR-trigger semantics that propagate to downstream workflows.
+Chosen option: **Custom GitHub App**, because it is the only option that combines short-lived tokens (1 hour, minted fresh each run), repository-scoped permissions, independence from any user account, and PR-trigger semantics that propagate to downstream workflows.
 
 ### Consequences
 
-* Good, because no long-lived secret exists in the repository — only the App's private key, which is itself rotatable without disrupting workflows
+* Good, because no long-lived secret exists in the workflow — only the App's private key, which is itself rotatable without disrupting workflows
 * Good, because Renovate PRs appear as `<app-name>[bot]`, clearly distinguishing automated changes from human ones in audit history
 * Good, because the App can be revoked or uninstalled independently of any user account
 * Bad, because initial setup requires manual steps in the GitHub UI (App creation, key generation, installation, secret storage) — documented under "Confirmation" below
@@ -60,24 +60,30 @@ Setup procedure (one-time, manual):
 
 ## Pros and Cons of the Options
 
-### Option A — Classic PAT
+### Classic Personal Access Token
+
+A long-lived PAT with `repo` + `workflow` scopes, stored as a single repo secret.
 
 * Good, because setup is the simplest (one secret, one workflow input)
 * Bad, because the token is tied to a user account and long-lived
 * Bad, because `repo` scope grants access to every repository the user can see, not just this one
 * Bad, because rotation is manual and easy to forget
 
-### Option B — Fine-grained PAT
+### Fine-grained Personal Access Token
+
+A PAT scoped to `stadlera/homelab` only, with explicit per-permission grants.
 
 * Good, because scope can be narrowed to this single repository
 * Bad, because the token is still tied to a user and still long-lived
 * Bad, because fine-grained PATs currently have a maximum lifetime measured in months, requiring periodic renewal
 
-### Option C — Custom GitHub App with per-run installation token
+### Custom GitHub App
+
+A GitHub App created in the owner's account, installed only on this repository. Each workflow run mints a fresh installation token via `actions/create-github-app-token`.
 
 * Good, because tokens are short-lived (1 hour) and minted fresh each run
 * Good, because permissions are scoped per-installation
-* Good, because the App is owned by the repo, not a user
+* Good, because the App is owned by the account, not a user identity — survives any contributor leaving
 * Neutral, because one private key must be stored — but it is the only long-lived asset and rotation requires no workflow change
 * Bad, because initial setup is more involved than a PAT
 
@@ -85,4 +91,4 @@ Setup procedure (one-time, manual):
 
 * `actions/create-github-app-token`: https://github.com/actions/create-github-app-token
 * GitHub docs — Authenticating with a GitHub App in a workflow: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
-* Renovate Action GitHub App example: https://github.com/renovatebot/github-action#self-hosted-github-app
+* Renovate Action — GitHub App example: https://github.com/renovatebot/github-action#self-hosted-github-app

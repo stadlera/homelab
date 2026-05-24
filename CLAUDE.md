@@ -48,3 +48,12 @@ Every change follows this sequence:
 - **Decisions in ADRs.** Non-obvious architectural choices get an ADR — not a comment or a Slack message.
 - **Small PRs.** One issue → one PR. Large PRs are hard to review and hard to revert.
 - **Idempotent.** Ansible roles and Terraform modules must be safe to re-run without unintended side effects.
+
+## ADRs
+
+When recording an architectural decision:
+
+- Copy `docs/adr/0000-template.md` and keep its structure (do not drop sections)
+- File name: `NNNN-short-kebab-slug.md`, using the next free number from `ls docs/adr/`
+- Reference the issue that prompted the decision in the header
+- If a concurrently-merging PR took your number, rename the file and update any cross-references before merging
