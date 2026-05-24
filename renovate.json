@@ -1,22 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "timezone": "UTC",
-  "schedule": ["before 6am on Friday"],
   "labels": ["dependencies"],
   "pinDigests": true,
   "packageRules": [
     {
-      "description": "Automerge GitHub Actions digest-only updates",
+      "description": "Group all GitHub Actions updates into one PR",
       "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["digest"],
-      "automerge": true,
-      "automergeType": "pr"
-    },
-    {
-      "description": "Group GitHub Actions version bumps (non-digest) into one PR",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["major", "minor", "patch"],
+      "matchUpdateTypes": ["major", "minor", "patch", "digest"],
       "groupName": "github actions"
     },
     {
