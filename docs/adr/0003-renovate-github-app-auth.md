@@ -38,7 +38,7 @@ Chosen option: **Custom GitHub App**, because it is the only option that combine
 
 The workflow `.github/workflows/renovate.yml` references two secrets:
 
-* `RENOVATE_APP_ID` — the App ID shown in the App's settings page
+* `RENOVATE_CLIENT_ID` — the Client ID shown in the App's settings page (the `Iv1.xxxx` string, **not** the numeric App ID)
 * `RENOVATE_APP_PRIVATE_KEY` — the contents of the `.pem` file generated for the App
 
 Setup procedure (one-time, manual):
@@ -54,7 +54,7 @@ Setup procedure (one-time, manual):
 4. Generate a private key — download the `.pem` file
 5. Install the App on `stadlera/homelab` only (Install App → Only select repositories)
 6. Add repo secrets at Settings → Secrets and variables → Actions:
-   * `RENOVATE_APP_ID` = the numeric App ID
+   * `RENOVATE_CLIENT_ID` = the Client ID from the App's settings page (the `Iv1.xxxx` string, **not** the numeric App ID)
    * `RENOVATE_APP_PRIVATE_KEY` = full contents of the `.pem` (including `-----BEGIN/END-----` lines)
 7. Trigger the workflow manually (Actions → Renovate → Run workflow) to verify
 
