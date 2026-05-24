@@ -85,4 +85,4 @@ Run releases from a workstation or CI job, no in-cluster reconciler.
 
 ## More Information
 
-Implementation work — `flux bootstrap`, repo layout under `kubernetes/clusters/`, and the first `Kustomization` consuming a SOPS-encrypted secret — will be tracked in a follow-up issue. Revisit this decision if the homelab grows to multiple clusters (Fleet or ArgoCD ApplicationSets become proportionate), or if a UI becomes a hard requirement and weave-gitops / Headlamp prove insufficient.
+Implementation — `flux bootstrap`, repo layout under `kubernetes/clusters/`, and the first `Kustomization` consuming a SOPS-encrypted secret — is tracked in #30. Cluster prerequisite is #29 (k3s bootstrap); manifest validation for PRs touching `kubernetes/` is #7. Revisit this decision if the homelab grows to multiple clusters (Fleet or ArgoCD ApplicationSets become proportionate), or if a UI becomes a hard requirement and weave-gitops / Headlamp prove insufficient.
