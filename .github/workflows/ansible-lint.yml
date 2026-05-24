@@ -1,0 +1,26 @@
+name: Ansible Lint
+
+on:
+  pull_request:
+    paths:
+      - 'ansible/**'
+
+permissions: {}
+
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install ansible-lint
+        run: pip install ansible-lint==24.12.2
+
+      - name: Run ansible-lint
+        run: ansible-lint ansible/
