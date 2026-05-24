@@ -27,7 +27,7 @@ Chosen option: **SHA digest pinning**, because Renovate eliminates the maintenan
 ### Consequences
 
 * Good, because CI supply chain is protected against tag-hijacking attacks
-* Good, because Renovate digest bumps are automerged (zero toil once configured)
+* Good, because Renovate batches all GitHub Actions updates (version bumps and digest changes) into a single grouped PR, keeping review overhead low
 * Bad, because diffs show opaque SHA strings rather than human-readable version tags — reviewers must rely on the inline version comment to recognise what changed
 
 ### Confirmation
@@ -47,7 +47,7 @@ Renovate enforces this via `pinDigests: true` in `renovate.json` and will open P
 Each `uses:` reference is a full 40-character commit SHA with the version tag as an inline comment. Renovate handles all updates.
 
 * Good, because builds are fully reproducible and tamper-evident
-* Good, because Renovate automates all updates, so the operational cost is zero
+* Good, because Renovate automates update discovery and PR creation — a digest change on a version-pinned tag signals potential tag re-pointing, which deserves review rather than silent acceptance
 * Bad, because SHA strings are opaque without the inline comment convention
 
 ### Mutable version tags
