@@ -8,6 +8,8 @@ permissions: {}
 jobs:
   changes:
     uses: ./.github/workflows/changes-gate.yml
+    permissions:
+      pull-requests: read
     with:
       filters: |
         src:
