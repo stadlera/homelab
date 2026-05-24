@@ -16,7 +16,7 @@ jobs:
   fmt:
     needs: changes
     if: needs.changes.outputs.changed == 'true'
-    name: Format check
+    name: format check
     runs-on: ubuntu-latest
     permissions:
       contents: read
