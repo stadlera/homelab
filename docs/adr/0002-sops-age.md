@@ -17,7 +17,7 @@ Secrets (API keys, passwords, kubeconfig tokens) must live alongside the infrast
 
 ## Considered Options
 
-* **SOPS + age** (chosen)
+* SOPS + age
 * git-crypt
 * Sealed Secrets
 * Vault + External Secrets Operator
@@ -29,12 +29,16 @@ Chosen option: **SOPS + age**, because it is the only option that satisfies all 
 
 ### Consequences
 
-* Good: single `.sops.yaml` config covers Flux, Ansible, and Terraform with no per-tool plugins
-* Good: age keys are plain files — easy to rotate, back up, and hand to CI as an env var
-* Watch out: losing the private key without a backup means losing access to all secrets — key backup and rotation procedure is required (tracked in #3)
-* Watch out: no dynamic secret leasing or automatic rotation; secrets are static until manually re-encrypted
+* Good, because a single `.sops.yaml` config covers Flux, Ansible, and Terraform with no per-tool plugins
+* Good, because age keys are plain files — easy to rotate, back up, and hand to CI as an env var
+* Bad, because losing the private key without a backup means losing access to all secrets — key backup and rotation procedure is required (tracked in #3)
+* Bad, because there is no dynamic secret leasing or automatic rotation; secrets are static until manually re-encrypted
 
-## Options Considered
+### Confirmation
+
+When the implementation in #3 is complete, review that: all secret-bearing files are listed under `.sops.yaml` path rules; no plaintext secrets are present in git history; and Flux, Ansible, and Terraform can each consume encrypted files in a clean-environment test.
+
+## Pros and Cons of the Options
 
 ### SOPS + age
 
@@ -51,6 +55,7 @@ SOPS encrypts individual YAML/JSON values in place; age provides the key primiti
 Transparent git filter that encrypts files on push and decrypts on pull.
 
 * Good, because it is invisible once configured — no per-file encrypt step
+* Neutral, because it is well-established but has a smaller active community than SOPS
 * Bad, because it encrypts entire files, making diffs unreadable
 * Bad, because Flux has no native git-crypt support — would need a pre-deploy decrypt step
 * Bad, because symmetric-key mode is fragile; GPG mode inherits GPG complexity
@@ -60,6 +65,7 @@ Transparent git filter that encrypts files on push and decrypts on pull.
 Bitnami controller encrypts Kubernetes Secrets into `SealedSecret` CRDs; the cluster holds the private key.
 
 * Good, because it integrates cleanly with Kubernetes RBAC
+* Neutral, because it is the natural fit if the workload were Kubernetes-only
 * Bad, because you need a running cluster to encrypt — chicken-and-egg during bootstrap
 * Bad, because it is Kubernetes-only; Ansible and Terraform secrets need a separate solution
 * Bad, because the controller manages the private key, making backup and rotation harder
@@ -70,8 +76,8 @@ HashiCorp Vault stores secrets dynamically; ESO syncs them into Kubernetes Secre
 
 * Good, because it supports dynamic secrets, leasing, and audit logging
 * Good, because it is the industry standard for larger environments
+* Neutral, because it could be adopted later if the homelab outgrows static secrets
 * Bad, because it requires running and maintaining Vault as infrastructure
-* Bad, because it is significant operational overhead for a homelab — disproportionate complexity
 * Bad, because secrets are not in git at all, which complicates bootstrapping and DR
 
 ### ansible-vault
@@ -79,5 +85,10 @@ HashiCorp Vault stores secrets dynamically; ESO syncs them into Kubernetes Secre
 Built-in Ansible encryption for vars files and strings.
 
 * Good, because it requires no extra tooling for Ansible users
+* Neutral, because it would be sufficient if Ansible were the only workload
 * Bad, because it is Ansible-only — Flux and Terraform have no support
 * Bad, because it uses a symmetric passphrase, making key rotation and CI integration awkward
+
+## More Information
+
+Implementation work (`.sops.yaml`, key bootstrap, rotation runbook, pre-commit hook) is tracked in #3. Revisit this decision if the homelab grows to require dynamic secrets or multi-team access control, at which point Vault + ESO becomes proportionate.
