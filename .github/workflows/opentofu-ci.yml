@@ -1,4 +1,4 @@
-name: Terraform CI
+name: OpenTofu CI
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ jobs:
     with:
       filters: |
         src:
-          - 'terraform/**'
+          - 'opentofu/**'
 
   fmt:
     needs: changes
@@ -28,7 +28,7 @@ jobs:
         with:
           tofu_version: '~1.9'
       - name: tofu fmt
-        run: tofu fmt -check -recursive terraform/
+        run: tofu fmt -check -recursive opentofu/
 
   validate-plan:
     needs: changes
@@ -43,7 +43,7 @@ jobs:
       fail-fast: false
     defaults:
       run:
-        working-directory: terraform/${{ matrix.module }}
+        working-directory: opentofu/${{ matrix.module }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1

@@ -36,7 +36,7 @@ Every change follows this sequence:
 |---|---|
 | `docs/adr/` | Architecture Decision Records — why decisions were made |
 | `docs/runbooks/` | Break-glass and operational procedures |
-| `terraform/` | Infrastructure provisioning (Proxmox, networking, DNS, Tailscale) |
+| `opentofu/` | Infrastructure provisioning (Proxmox, networking, DNS, Tailscale) |
 | `ansible/` | Host and service configuration (Proxmox hosts, Pis, Snapcast) |
 | `kubernetes/` | Flux-managed cluster workloads and infrastructure |
 | `.github/workflows/` | CI — terraform plan, ansible-lint, manifest validation |
