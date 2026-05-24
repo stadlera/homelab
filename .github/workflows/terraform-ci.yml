@@ -40,24 +40,11 @@ jobs:
       - uses: opentofu/setup-opentofu@9d84900f3238fab8cd84ce47d658d25dd008be2f # v1
         with:
           tofu_version: '~1.9'
-      # TODO: remove once the first .tf files are committed to a module dir (issue #17)
-      - name: Check for .tf files
-        id: has_tf
-        run: |
-          if ls *.tf 2>/dev/null | grep -q .; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "No .tf files found — skipping init/validate/plan"
-          fi
       - name: tofu init
-        if: steps.has_tf.outputs.exists == 'true'
         run: tofu init -backend=false
       - name: tofu validate
-        if: steps.has_tf.outputs.exists == 'true'
         run: tofu validate
       - name: tofu plan
-        if: steps.has_tf.outputs.exists == 'true'
         run: tofu plan -refresh=false -input=false
 
   comment:
