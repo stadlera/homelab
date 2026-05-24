@@ -14,7 +14,7 @@ The k3s cluster needs a GitOps controller to reconcile manifests from this repos
 * Lightweight controller footprint — the cluster runs on Proxmox VMs alongside other workloads; every extra Deployment costs RAM
 * Single cluster, single tenant — no need for multi-cluster fan-out or RBAC partitioning
 * Pull-based reconciliation with drift correction — the cluster must self-heal from git, not depend on push pipelines
-* Stays out of the way — the homelab already has Grafana/Prometheus for observability; the GitOps tool should not bring a heavy UI stack of its own
+* Stays out of the way — a separate observability stack will own metrics, logs, and dashboards; the GitOps tool should not bring a heavy UI of its own
 
 ## Considered Options
 
