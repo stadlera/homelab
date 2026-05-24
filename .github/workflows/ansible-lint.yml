@@ -38,4 +38,9 @@ jobs:
         run: pip install ansible-lint==24.12.2
 
       - name: Run ansible-lint
-        run: ansible-lint ansible/
+        run: |
+          if ! find ansible/ \( -name "*.yml" -o -name "*.yaml" \) | grep -q .; then
+            echo "No YAML files in ansible/ — nothing to lint."
+            exit 0
+          fi
+          ansible-lint ansible/
