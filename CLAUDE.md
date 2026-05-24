@@ -41,6 +41,14 @@ Every change follows this sequence:
 | `kubernetes/` | Flux-managed cluster workloads and infrastructure |
 | `.github/workflows/` | CI — terraform plan, ansible-lint, manifest validation |
 
+## CI
+
+- **Pin GitHub Actions by SHA.** Use `uses: owner/action@<sha> # vN` — tags are mutable and can be silently overwritten. Resolve the current SHA with:
+  ```
+  git ls-remote https://github.com/owner/action refs/tags/vN
+  ```
+- **Always post new comments, never edit existing ones.** Updating a comment in-place hides history and makes the PR timeline confusing.
+
 ## Principles
 
 - **As-code first.** If it can be automated, it should be. Manual steps are explicit exceptions with a documented reason.
