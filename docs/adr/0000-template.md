@@ -61,9 +61,3 @@ Chosen option: **[Option A]**, because [concise justification].
 ## More Information
 
 [Links to follow-up issues, related ADRs, external references, or notes on when to revisit this decision.]
-
-## History
-
-Append-only log of material amendments to this ADR after it was accepted. Do not edit the sections above to reflect post-decision changes; record them here as dated entries with a brief description. Decision reversals get a new ADR and a `Status: superseded by ADR-XXXX` update instead.
-
-* YYYY-MM-DD — Initial decision (this ADR), issue #N

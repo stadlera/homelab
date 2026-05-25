@@ -92,7 +92,3 @@ A GitHub App created in the owner's account, installed only on this repository. 
 * `actions/create-github-app-token`: https://github.com/actions/create-github-app-token
 * GitHub docs — Authenticating with a GitHub App in a workflow: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
 * Renovate Action — GitHub App example: https://github.com/renovatebot/github-action#self-hosted-github-app
-
-## History
-
-* 2026-05-24 — Initial decision (this ADR), issue #4

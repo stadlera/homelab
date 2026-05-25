@@ -33,10 +33,11 @@ Chosen option: **OpenTofu**, because it preserves every property that made Terra
 * Good, because HCL and the provider protocol are unchanged — existing Terraform modules, examples, and muscle memory transfer with no rewrite
 * Good, because the toolchain around it (`tflint`, `terragrunt`, `terraform-docs`, IDE plugins) already targets both binaries
 * Bad, because some new third-party providers still ship to the Terraform registry first; OpenTofu's registry mirrors most but not all, so occasional manual provider sourcing may be required
+* Bad, because the `terraform/` directory in this repo is now misnamed — a follow-up rename to `opentofu/` (or a neutral `iac/`) is needed to avoid confusion
 
 ### Confirmation
 
-When the migration is complete, confirm that: the `tofu` binary (not `terraform`) is used in all CI workflows, Makefiles, and runbooks; no `required_providers` block pulls from a registry that requires a Terraform-only licence; and `tofu fmt`, `tofu validate`, and `tofu plan` run cleanly against every stack in `opentofu/`.
+When the migration is complete, confirm that: the `tofu` binary (not `terraform`) is used in all CI workflows, Makefiles, and runbooks; no `required_providers` block pulls from a registry that requires a Terraform-only licence; and `tofu fmt`, `tofu validate`, and `tofu plan` run cleanly against every stack in `terraform/`. The directory rename is tracked as a follow-up.
 
 ## Pros and Cons of the Options
 
@@ -83,9 +84,5 @@ Use Ansible (already in the stack for configuration) to also provision infra via
 
 * OpenTofu announcement and governance: https://opentofu.org/
 * HashiCorp BSL FAQ: https://www.hashicorp.com/license-faq
+* Follow-up: rename `terraform/` → `opentofu/` (or `iac/`) and update CI workflows to use the `tofu` binary — to be tracked as a separate issue
 * Revisit this decision if OpenTofu governance falters, if a critical provider becomes Terraform-exclusive, or if the infra grows to a scale where Pulumi's abstraction model would meaningfully reduce duplication
-
-## History
-
-* 2026-05-24 — Initial decision (this ADR), issue #9
-* 2026-05-25 — Removed stale references to a pending `terraform/` → `opentofu/` rename and updated the Confirmation path; the rename had already landed (CI in `.github/workflows/opentofu-ci.yml` runs against `opentofu/` with the `tofu` binary).
