@@ -1,0 +1,79 @@
+name: Kubernetes manifest validation
+
+on:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  changes:
+    uses: ./.github/workflows/changes-gate.yml
+    permissions:
+      pull-requests: read
+    with:
+      filters: |
+        src:
+          - 'kubernetes/**'
+          - '.github/workflows/k8s-validate.yml'
+
+  validate:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      # TODO(#29): align with the k3s server version once the cluster is bootstrapped
+      KUBERNETES_VERSION: "1.31.0"
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: fluxcd/flux2/action@1fd61a06264d71cf445ed55c4f14d401d26a1c64 # v2.8.8
+        with:
+          version: '2.8.8'
+
+      - id: discover
+        name: Discover Flux Kustomizations
+        run: |
+          set -euo pipefail
+          files=$(grep -rlE '^kind:[[:space:]]*Kustomization$' kubernetes/clusters 2>/dev/null \
+            | xargs -r grep -lE 'kustomize\.toolkit\.fluxcd\.io' 2>/dev/null \
+            || true)
+          if [ -z "$files" ]; then
+            echo "No Flux Kustomization CRs found under kubernetes/clusters/ — nothing to render."
+            echo "entries=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Found:"
+            echo "$files"
+            {
+              echo "entries<<EOF"
+              echo "$files"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.discover.outputs.entries != ''
+        name: Render Flux Kustomizations
+        run: |
+          set -euo pipefail
+          mkdir -p _rendered
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            name=$(yq '.metadata.name' "$f" | head -n1)
+            path=$(yq '.spec.path'     "$f" | head -n1)
+            out="_rendered/${name}.yaml"
+            echo "Rendering $f (name=$name, path=$path) -> $out"
+            flux build kustomization "$name" \
+              --kustomization-file "$f" \
+              --path "$path" \
+              --dry-run > "$out"
+            # SOPS-encrypted docs cannot be decrypted in CI (no age key); drop them.
+            yq -i 'select(has("sops") | not)' "$out"
+          done <<< "${{ steps.discover.outputs.entries }}"
+
+      - if: steps.discover.outputs.entries != ''
+        name: Validate with kubeconform
+        uses: docker://ghcr.io/yannh/kubeconform:v0.7.0@sha256:85dbef6b4b312b99133decc9c6fc9495e9fc5f92293d4ff3b7e1b30f5611823c
+        with:
+          entrypoint: '/kubeconform'
+          args: "-strict -ignore-missing-schemas -kubernetes-version ${{ env.KUBERNETES_VERSION }} -summary -output text _rendered/"
