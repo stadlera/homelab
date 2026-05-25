@@ -41,7 +41,6 @@ jobs:
             || true)
           if [ -z "$files" ]; then
             echo "No Flux Kustomization CRs found under kubernetes/clusters/ — nothing to render."
-            echo "entries=" >> "$GITHUB_OUTPUT"
           else
             echo "Found:"
             echo "$files"
@@ -75,5 +74,4 @@ jobs:
         name: Validate with kubeconform
         uses: docker://ghcr.io/yannh/kubeconform:v0.7.0@sha256:85dbef6b4b312b99133decc9c6fc9495e9fc5f92293d4ff3b7e1b30f5611823c
         with:
-          entrypoint: '/kubeconform'
-          args: "-strict -ignore-missing-schemas -kubernetes-version ${{ env.KUBERNETES_VERSION }} -summary -output text _rendered/"
+          args: "-strict -ignore-missing-schemas -kubernetes-version ${{ env.KUBERNETES_VERSION }} -summary _rendered/"
