@@ -64,3 +64,16 @@ When recording an architectural decision:
 - File name: `NNNN-short-kebab-slug.md`, using the next free number from `ls docs/adr/`
 - Reference the issue that prompted the decision in the header
 - If a concurrently-merging PR took your number, rename the file and update any cross-references before merging
+
+ADRs are immutable once `Status: Accepted`. To change a decision, write a new ADR that supersedes
+it and update the prior ADR's `Status` line to `Superseded by ADR-NNNN`. Do not edit the body of
+an accepted ADR to reflect later changes — factual drift (paths renamed, tools upgraded,
+references that have moved) is expected and not corrected in the ADR. Current-state truth lives
+in this file, runbooks, and the code itself; ADRs are dated snapshots of why a decision was made
+at the time.
+
+## Markdown
+
+For prose in `.md` files, hard-wrap at roughly 100 characters where it falls naturally — not
+enforced, just a hint to keep `git diff` and side-by-side review readable. Tables, fenced code
+blocks, and lines dominated by a long URL stay unwrapped.
